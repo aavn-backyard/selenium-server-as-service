@@ -10,6 +10,7 @@ set /p port=Enter the port:
 set java=%JAVA_HOME%\bin\java.exe
 set current_selenium_server_jar=%cd%\selenium-server-standalone-2.43.1.jar
 set service_name=SeleniumServer_%port%
+set log_path=%cd%\selenium_log
 
 rem Validate port
 set "var="&for /f "delims=0123456789" %%i in ("%port%") do set var=%%i
@@ -27,6 +28,8 @@ if not exist %current_selenium_server_jar% goto selenium-server-jar-missing
 
 rem Use NSSM to install SeleniumServer command as a Windows service
 nssm-x64.exe install %service_name% "%java%" "-jar %current_selenium_server_jar% -port %port%"
+nssm-x64.exe set %service_name% AppStdout %log_path%
+nssm-x64.exe set %service_name% AppStderr %log_path%
 goto finish
 
 :missing-jdk
